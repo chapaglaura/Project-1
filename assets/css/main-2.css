@@ -1,0 +1,47 @@
+hr {
+    border-top-color: white;
+    width: 80%;
+}
+.hidden {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.menu-icons {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    padding: 20px;
+}
+
+.users-menu-icon, .close-menu-icon {
+    transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    color: white;
+}
+
+.users-menu-icon:hover, .close-menu-icon:hover {
+    color: blue;
+}
+
+.users-menu {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 0%;
+    left: 0;
+    z-index: 1;
+    background-color: black;
+    transition: all 1s cubic-bezier(0.23, 1, 0.320, 1)
+}
+
+.menu-opened {
+    width: 30% !important;
+}
+
+.users {
+    text-align: center;
+    transition: all 0.5s cubic-bezier(0.47, 0, 0.745, 0.715);
+    color: white;
+}

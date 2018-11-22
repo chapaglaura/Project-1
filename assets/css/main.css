@@ -1,0 +1,60 @@
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.main {
+    position: relative;
+}
+
+.main .row {
+    position: absolute;
+    transition: left 1s cubic-bezier(.87,.13,.3,.95);
+}
+
+.main-row {
+    background-color: lightblue;
+    left: 0;
+}
+
+.secondary-row {
+    background-color: steelblue;
+    left: 100%;
+}
+
+.fill { 
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+}
+
+.rooms {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #222;
+}
+
+.rooms div {
+    width: 50%;
+    display: flex;
+    align-items: center;
+}
+
+.rooms button {
+    margin: 10px;
+}
+
+.rooms i {
+    padding: 0 10px;
+}
+
+.rooms input {
+    border: none;
+    border-radius: 5px;
+}
+
+#valid-username {
+    margin: 0;
+}
