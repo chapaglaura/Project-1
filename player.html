@@ -16,7 +16,7 @@
 </head>
 
 <body>
-
+    <!-- USERS MENU (list of names) -->
     <div class="users-menu">
         <div class="menu-icons">
             <i class="fas fa-users users-menu-icon"></i>
@@ -27,6 +27,8 @@
             <hr>
         </div>
     </div>
+
+    <!-- ESTO FALTA DE CAMBIAR Y AGREGAR COSAS, ES EL LAYOUT PRINCIPAL -->
     <div class="container-fluid p-0 fill main">
         <div class="row fill mx-auto main-row">
             <div class="col-md-12 rooms">
@@ -39,6 +41,7 @@
             <i class="fas fa-search-plus"></i>
         </button>
 
+        <!-- MODAL POPUP WITH SEARCH FEATURE -->
         <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -76,6 +79,8 @@
         </div>
     </div>
 
+    <div class="room-closed"></div>
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -84,7 +89,7 @@
         crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
 
-<!--
+<!-- ESTO ES EL PLAYBACK SDK DE SPOTIFY
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 
 <script>
