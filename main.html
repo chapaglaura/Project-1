@@ -22,9 +22,11 @@
             <div class="col-md-12 rooms">
                 <h3>Create a room:</h3>
                 <div>
-                    <i class="fas fa-plus create-icon"></i><input type="text" id="create-room-name" />
+                    <i class="fas fa-plus create-icon"></i>
+                    <input type="text" id="create-room-name" />
                 </div>
-                <button id="create-button" type="button" class="btn btn-info">Next!</button>
+                <p id="valid-room"> </p>
+                <button id="create-button" disabled type="button" class="btn btn-info">Next!</button>
             </div>
             <div class="col-md-12 rooms">
                 <h3>...or join a room:</h3>
@@ -32,7 +34,8 @@
                     <i class="fas fa-plus join-icon"></i>
                     <input type="text" id="join-room-name" />
                 </div>
-                <button id="join-button" type="button" class="btn btn-info">Go!</button>
+                <p id="existing-room"> </p>
+                <button id="join-button"  type="button" class="btn btn-info">Go!</button>
             </div>
         </div>
 

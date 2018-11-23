@@ -45,3 +45,9 @@ hr {
     transition: all 0.5s cubic-bezier(0.47, 0, 0.745, 0.715);
     color: white;
 }
+
+.search {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}

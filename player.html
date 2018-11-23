@@ -18,14 +18,14 @@
 <body>
 
     <div class="users-menu">
-            <div class="menu-icons">
-                    <i class="fas fa-users users-menu-icon"></i>
-                    <i class="fas fa-times close-menu-icon hidden none"></i>
-                </div>
-                <div class="users hidden">
-                    <h3>Users</h3>
-                    <hr>
-                </div>
+        <div class="menu-icons">
+            <i class="fas fa-users users-menu-icon"></i>
+            <i class="fas fa-times close-menu-icon hidden"></i>
+        </div>
+        <div class="users hidden">
+            <h3>Users</h3>
+            <hr>
+        </div>
     </div>
     <div class="container-fluid p-0 fill main">
         <div class="row fill mx-auto main-row">
@@ -34,6 +34,48 @@
             </div>
         </div>
     </div>
+    <div class="search">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#searchModal">
+            <i class="fas fa-search-plus"></i>
+        </button>
+
+        <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="searchModalTitle">Search by</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12 search-popup">
+                                    <form id="search-form">
+                                        <div class="form-group">
+                                            <div class="btn-group" role="group">
+                                                <button id="track-btn" type="button" class="search-btn btn btn-secondary active">Track</button>
+                                                <button id="artist-btn" type="button" class="search-btn btn btn-secondary">Artist</button>
+                                                <button id="album-btn" type="button" class="search-btn btn btn-secondary">Album</button>
+                                                <button id="playlist-btn" type="button" class="search-btn btn btn-secondary">Playlist</button>
+                                            </div>
+                                            <input type="text" class="search-parameter form-control" id="track"
+                                                placeholder="Track">
+
+                                            <button type="button" class="final-search-btn btn btn-primary btn-success">Search</button>
+                                        </div>
+                                        <div class="search-results"></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -41,7 +83,41 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
-    <!--<script src="https://sdk.scdn.co/spotify-player.js"></script>-->
+
+<!--
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+<script>
+  window.onSpotifyWebPlaybackSDKReady = () => {
+    
+    const player = new Spotify.Player({
+      name: "Laura's App",
+      getOAuthToken: cb => { cb('BQDa7ap-PdZOfjw26QelvH22yhzthjTRz8zD39kn6A1BL3GF-NBHfNodymxENMZAxS_VDN21F3wNjf9DR9lolES2lFCfcQNURwG5t-CyIS_8QRoJeORAQB9GLyrQGjHxXC0pbO6oMpnPi5pnFvB37zo6viauqR-PqnQrQIIvIA'); }
+    });
+
+    // Error handling
+    player.addListener('initialization_error', ({ message }) => { console.error(message); });
+    player.addListener('authentication_error', ({ message }) => { console.error(message); });
+    player.addListener('account_error', ({ message }) => { console.error(message); });
+    player.addListener('playback_error', ({ message }) => { console.error(message); });
+
+    // Playback status updates
+    player.addListener('player_state_changed', state => { console.log(state); });
+
+    // Ready
+    player.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id);
+    });
+
+    // Not Ready
+    player.addListener('not_ready', ({ device_id }) => {
+      console.log('Device ID has gone offline', device_id);
+    });
+
+    // Connect to the player!
+    player.connect();
+  };
+</script>-->
     <script src="assets/javascript/main-2.js"></script>
 </body>
 
