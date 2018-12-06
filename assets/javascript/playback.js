@@ -153,10 +153,6 @@ function searchDevices() {
             div.append(p);
         }
 
-        adt.update({
-            device: deviceID
-        })
-
         $('.devices div').empty();
         $('.devices div').append(div);
     })
