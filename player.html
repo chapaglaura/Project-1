@@ -16,23 +16,73 @@
 </head>
 
 <body>
+
+
     <!-- USERS MENU (list of names) -->
-    <div class="users-menu">
-        <div class="menu-icons">
-            <i class="fas fa-users users-menu-icon"></i>
-            <i class="fas fa-times close-menu-icon hidden"></i>
+    <div class="menu-icons">
+        <div class="menu-icons-left">
+            <i class="fas fa-fw fa-users menu-icon users-icon" id="icon-1"></i>
+            <i class="fas fa-fw fa-play-circle menu-icon player-icon" id="icon-2"></i>
+            <i class="fab fa-fw fa-connectdevelop menu-icon device-icon" id="icon-3"></i>
+            <i class="fas fa-fw fa-music menu-icon queue-icon" id="icon-4"></i>
+            <i class="fas fa-fw fa-info-circle menu-icon info-icon" id="icon-5"></i>
+
         </div>
-        <div class="users hidden">
+        <div class="menu-items users hidden">
             <h3>Users</h3>
             <hr>
         </div>
+        <div class="menu-items player hidden">
+            <h3>Player</h3>
+            <hr>
+            <div class="player-controls">
+                <i class="fas fa-minus minus" onclick="decreaseVol()"></i>
+                <i class="fas fa-pause pause" onclick="pauseSong()"></i>
+                <i class="fas fa-play play" onclick="playSong()"></i>
+                <i class="fas fa-step-forward next" onclick="nextSong()"></i>
+                <i class="fas fa-plus plus" onclick="increaseVol()"></i>
+            </div>
+            <img id="current-track" />
+            <h5 id="current-track-name"></h5>
+            <h6 id="current-track-artists"></h6>
+            <button class="btn btn-success btn-sm hidden" id="login">Log in</button>
+        </div>
+        <div class="menu-items devices hidden">
+            <h3>Devices</h3>
+            <hr>
+            <div></div>
+        </div>
+        <div class="menu-items queue hidden">
+            <h3>Up Next:</h3>
+            <hr>
+            <div class="queue-list">
+
+            </div>
+        </div>
+        <div class="menu-items info hidden">
+            <h3>Information</h3>
+            <hr>
+            <div>
+                <ol>
+                    <li>Log in to your Spotify account (<i class="fas fa-fw fa-play-circle"></i>).</li>
+                    <li>Choose your preferred device (<i class="fab fa-fw fa-connectdevelop"></i>).</li>
+                    <li>Search songs (<i class="fas fa-search-plus"></i>).</li>
+                    <li>Add them to queue (<i class="fas fa-fw fa-music"></i>), so you can vote for them.</li>
+                    <li>Enjoy!</li>
+                </ol>
+            </div>
+        </div>
     </div>
+
+
 
     <!-- ESTO FALTA DE CAMBIAR Y AGREGAR COSAS, ES EL LAYOUT PRINCIPAL -->
     <div class="container-fluid p-0 fill main">
-        <div class="row fill mx-auto main-row">
-            <div class="col-md-12 rooms">
-                <button id="login">Log in</button>
+        <div class="row fill mx-auto">
+            <div class="col-md-12 media-info text-center">
+                <div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -66,7 +116,7 @@
                                             <input type="text" class="search-parameter form-control" id="track"
                                                 placeholder="Track">
 
-                                            <button type="button" class="final-search-btn btn btn-primary btn-success">Search</button>
+                                            <button type="button" class="final-search-btn btn">Search</button>
                                         </div>
                                         <div class="search-results"></div>
                                     </form>
@@ -87,42 +137,17 @@
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
+
     <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
 
-<!-- ESTO ES EL PLAYBACK SDK DE SPOTIFY
-<script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script src="assets/javascript/menu.js"></script>
 
-<script>
-  window.onSpotifyWebPlaybackSDKReady = () => {
-    
-    const player = new Spotify.Player({
-      name: "Laura's App",
-      getOAuthToken: cb => { cb('BQDa7ap-PdZOfjw26QelvH22yhzthjTRz8zD39kn6A1BL3GF-NBHfNodymxENMZAxS_VDN21F3wNjf9DR9lolES2lFCfcQNURwG5t-CyIS_8QRoJeORAQB9GLyrQGjHxXC0pbO6oMpnPi5pnFvB37zo6viauqR-PqnQrQIIvIA'); }
-    });
+    <script src="assets/javascript/search.js"></script>
 
-    // Error handling
-    player.addListener('initialization_error', ({ message }) => { console.error(message); });
-    player.addListener('authentication_error', ({ message }) => { console.error(message); });
-    player.addListener('account_error', ({ message }) => { console.error(message); });
-    player.addListener('playback_error', ({ message }) => { console.error(message); });
+    <script src="assets/javascript/playback.js"></script>
 
-    // Playback status updates
-    player.addListener('player_state_changed', state => { console.log(state); });
+    <script src="assets/javascript/voting.js"></script>
 
-    // Ready
-    player.addListener('ready', ({ device_id }) => {
-      console.log('Ready with Device ID', device_id);
-    });
-
-    // Not Ready
-    player.addListener('not_ready', ({ device_id }) => {
-      console.log('Device ID has gone offline', device_id);
-    });
-
-    // Connect to the player!
-    player.connect();
-  };
-</script>-->
     <script src="assets/javascript/main-2.js"></script>
 </body>
 

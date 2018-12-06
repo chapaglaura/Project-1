@@ -1,4 +1,6 @@
 var current_room;
+var admin = false;
+
 $(document).ready(() => {
 
     sessionStorage.clear(); // clears session storage
@@ -78,7 +80,7 @@ $(document).ready(() => {
         var room_name = $('#create-room-name').val(); // (1)
         current_room = database.ref('/rooms/' + room_name); // (2)
         sessionStorage.setItem('room', room_name); // (3)
-
+        admin = true;
     });
 
     //Input event handler
@@ -142,7 +144,6 @@ $(document).ready(() => {
         current_room.once("value", function (snapshot) {
             if (snapshot.val() != null) { // (1)
                 var a = Object.values(snapshot.val()); // (2)
-                console.log(a.indexOf(name));
                 sessionStorage.setItem('created', 'no'); // (3)
                 if (a.indexOf(name) === -1) { // (4)
                     $('#valid-username').css('color', 'lightgreen').text('Valid username.');
@@ -170,6 +171,7 @@ $(document).ready(() => {
            (2) Stores username in session storage for later use.
            (3) Redirect to player webpage. */
         var name = $('#your-name').val(); // (1)
+        
         sessionStorage.setItem('name', name); // (2)
         location.href = 'player.html'; // (3)
     });

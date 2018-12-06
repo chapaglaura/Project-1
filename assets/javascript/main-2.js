@@ -1,7 +1,37 @@
-var token = ''; // token stored in global variable as it is needed for Playback SDK
-var r; // temporary for response in AJAX call
+var selected;
+
+var token = '';
+var deviceID = '';
+var volume = '';
+
+var room = sessionStorage.getItem('room');
+var name = sessionStorage.getItem('name');
+var admin = false;
+
+
+/* DATABASES */
+
+var config = {
+    apiKey: "AIzaSyBx9Tndm3dCv-AKVPS_pslFRAWz3je1_7g",
+    authDomain: "project-1-ec39b.firebaseapp.com",
+    databaseURL: "https://project-1-ec39b.firebaseio.com",
+    projectId: "project-1-ec39b",
+    storageBucket: "project-1-ec39b.appspot.com",
+    messagingSenderId: "90657483363"
+};
+
+firebase.initializeApp(config);
+
+var database = firebase.database(); // stores firebase database
+
+var songs = database.ref('/rooms/' + room + '/songs/');
+var current_room = database.ref('/rooms/' + room); // reference to user's specified room in database
+var connected = database.ref('.info/connected');
+var adt = database.ref('rooms/' + room + '/admin-token');
 
 $(document).ready(() => {
+
+    /* GET SESSION STORAGE */
 
     /*If room was previously closed (admin left),
     room gets deleted from database, so it has to be
@@ -18,66 +48,48 @@ $(document).ready(() => {
         p.text('Administrator left.');
         div.append(h3, p);
     }
-    /* Menu with list of users. Toggles hiding class to alternate
-    between open and closed menu. */
-    $('.users-menu-icon, .close-menu-icon').click(function () {
-        $('.users-menu-icon, .close-menu-icon, .users').toggleClass('hidden');
-        $('.users-menu').toggleClass('menu-opened');
-
-    });
-
-    //Database initialization
-    var config = {
-        apiKey: "AIzaSyBx9Tndm3dCv-AKVPS_pslFRAWz3je1_7g",
-        authDomain: "project-1-ec39b.firebaseapp.com",
-        databaseURL: "https://project-1-ec39b.firebaseio.com",
-        projectId: "project-1-ec39b",
-        storageBucket: "project-1-ec39b.appspot.com",
-        messagingSenderId: "90657483363"
-    };
-
-    firebase.initializeApp(config);
-
-    var database = firebase.database(); // stores firebase database
-
-    var connected = database.ref(".info/connected"); // reference to directory in firebase database with online connections
-
-    var name = sessionStorage.getItem('name'); // get name value stored in previous page from session storage
-    var room = sessionStorage.getItem('room'); // get room value stored in previous page from session storage
-    var admin = false; // administrator flag
-
 
     /* If the 'created' flag is 'yes', it means
     the room was created and the user is the admin */
-    if (sessionStorage.getItem('created') === 'yes') {
+    if (sessionStorage.getItem('created') === 'no') {
+        $('#login, .devices, .device-icon, .player-icon, .player').css('display', 'none');
+    }
+    else {
         admin = true;
     }
 
-    var current_room = database.ref('/rooms/' + room); // reference to user's specified room in database
 
-    /* Any change in the online connections reference,
-    triggers an addition or deletion of the user to
-    the specified room.
-    (1) If the user is the admin, it is added with the admin key.
-    (2) If the admin gets disconnected, it is removed from user list and room is closed.
-    */
+    /* DATABASE EVENTS */
+
     connected.on("value", function (snapshot) {
-        if (snapshot.val() && sessionStorage.getItem('closed') != 'yes') {
+        if (snapshot.val()) {
             if (admin) {
                 current_room.set({
-                    'admin': name
+                    admin: name
                 });
+
+                adt.update({
+                    token: token,
+                    device: deviceID
+                });
+
                 var con = current_room;
                 con.onDisconnect().remove();
-
             }
             else {
                 var con = current_room.push(name);
                 con.onDisconnect().remove();
-            }
 
+                adt.once('value', function (snapshot) {
+                    token = snapshot.val().token;
+                })
+
+            }
         }
     });
+
+
+
 
     /* If any child from this room removed, in other words,
     a user leaves the room, the function is triggered.
@@ -86,6 +98,7 @@ $(document).ready(() => {
     (3) Name of user is found in users list and removed. */
 
     current_room.on("child_removed", function (snapshot) {
+  
         if (snapshot.ref_.path.pieces_[2] === 'admin') {  // (1)
             var div = $('.room-closed');
             div.empty();
@@ -111,11 +124,71 @@ $(document).ready(() => {
     current_room.on("child_added", function (snapshot) {
         var name = snapshot.val(); // (1)
 
-        var p = $('<p>'); // (2)
+        if ($.type(name) === 'string') {
+            var p = $('<p>'); // (2)
 
-        p.text(name); // (2)
+            p.text(name); // (2)
 
-        $('.users').append(p); // (3)
+            $('.users').append(p); // (3)
+        }
+    });
+
+    songs.on('value', function (snapshot) {
+        $('.queue-list').empty();
+        if (snapshot.exists()) {
+            var ids = Object.keys(snapshot.val());
+    
+
+            var sorted = false;
+            while (!sorted) {
+                sorted = true;
+                for (var i = 0; i < ids.length; i++) {
+                    var id1 = snapshot.val()[ids[i]];
+                    var id2 = snapshot.val()[ids[i + 1]];
+                    if (i < ids.length - 1) {
+                        if (id1.votes < id2.votes) {
+                            sorted = false;
+                            var temp = ids[i];
+                            ids[i] = ids[i + 1];
+                            ids[i + 1] = temp;
+                        }
+                    }
+                }
+            }
+
+            for (var i = 0; i < ids.length; i++) {
+                var div = $('<div>');
+
+                var track_name = snapshot.val()[ids[i]].name;
+                var track_artists = snapshot.val()[ids[i]].artists;
+                var track_votes = snapshot.val()[ids[i]].votes;
+                var voters_up = snapshot.val()[ids[i]].upvoters;
+                var voters_down = snapshot.val()[ids[i]].downvoters;
+                var image = snapshot.val()[ids[i]].image;
+
+
+                var p = $('<p class="queue-track" data-id="' + ids[i] + '" data-name="' + track_name + '" data-artists="' + track_artists + '">');
+
+
+                p.text(track_name + ' - ' + track_artists);
+                var up = $('<i class="far fa-fw fa-thumbs-up thumbs"></i>');
+                var down = $('<i class="far fa-fw fa-thumbs-down thumbs"></i>');
+
+                if (voters_up.indexOf(name) != -1) {
+                    up.removeClass('far').addClass('fas');
+                }
+                else if (voters_down.indexOf(name) != -1) {
+                    down.removeClass('far').addClass('fas');
+                }
+                var v = $('<p class="votes" data-votes="' + track_votes + '">');
+
+                v.text('Votes: ' + track_votes);
+
+                div.append(p, up, down, v);
+                $('.queue-list').append(div);
+            }
+        }
+
     });
 
     // Click event handler
@@ -123,8 +196,33 @@ $(document).ready(() => {
         /* Login URL with client ID gotten for API
         and redirect URI from whitelist specified
         for app */
-        location.href = 'https://accounts.spotify.com/authorize/?client_id=537b0cdacc7f46de8bd9bf27057c93ca&response_type=token&redirect_uri=https://chapaglaura.github.io/Project-1/player.html';
-    })
+
+        var scopes = [
+            'streaming',
+            'user-read-birthdate',
+            'user-read-private',
+            'user-modify-playback-state',
+            'user-read-email',
+            'user-library-read',
+            'user-top-read',
+            'playlist-modify-public',
+            'user-read-playback-state',
+            'user-follow-read',
+            'user-read-recently-played',
+            'playlist-read-private',
+            'user-library-modify',
+            'playlist-read-collaborative',
+            'playlist-modify-private',
+            'user-follow-modify',
+            'user-read-currently-playing'
+        ];
+
+        var redirect_uri = 'https://chapaglaura.github.io/Project-1/player.html'
+
+        location.href = 'https://accounts.spotify.com/authorize/?client_id=537b0cdacc7f46de8bd9bf27057c93ca&response_type=token&redirect_uri=' + redirect_uri + '&scope=' + scopes.join('%20');
+    });
+
+
 
     /*Gets current URL, as it is needed if the
     access token has been given. The Spotify API
@@ -135,105 +233,59 @@ $(document).ready(() => {
     var current_url = $(location).attr('href'); // (1)
 
     if (current_url.includes('access_token')) { // (2)
-        current_url_array = current_url.split('=');
+        var current_url_array = current_url.split('=');
         current_url_array = current_url_array[1].split('&');
         token = current_url_array[0];
 
+        $('#login').css('display', 'none');
+
+        setTimeout(searchDevices, 1500);
+
     }
-
-    // Click event handler
-    $('.search-btn').click(function () {
-
-        /* When choosing categories for search query:
-        (1) Selected category is stored in variable
-        (2) Input element has attributes id and placeholder set to category chosen
-        (3) Change active class from previous category selected to current one */
-
-        var clicked = $(this).text(); // (1)
-
-        $('.search-parameter').attr({ 'id': clicked.toLowerCase(), 'placeholder': clicked }); // (2)
-
-        $('.search-btn').removeClass('active'); // (3)
-        $(this).addClass('active');
-    });
-
-    var selected;
-    $('.final-search-btn').click(function () {
-        selected = $('.search-btn.active').text().toLowerCase();
-        var query = $('.search-parameter').val();
-        $('.search-parameter').val('');
-        query = query.split(' ').join('+');
-
-        $('.search-results').empty();
-
-        $.ajax({
-            url: 'https://api.spotify.com/v1/search?q=' + query + '&type=' + selected + '&access_token=' + token,
-            method: 'GET'
-        }).then(function (response) {
-            r = { ...response };
-            console.log(r);
-            selected += 's';
-
-            getSelected(selected, response);
-        });
-
-
-    });
-
-    $('.search-results').on('click', '.each-search', function (e) {
-        e.preventDefault();
-        console.log("HEY");
-        var index = $(this).attr('data-number');
-    });
-
-
 
 });
 
-function getSelected (s, r) {
-    var items = r[s].items;
+function getLyrics() {
+    var track_name = $('#current-track-name').text();
+    var track_artist = $('#current-track-artists').text();
+    track_artist = track_artist.split(',');
 
-    for (var i = 0; i < items.length; i++) {
+    track_artist = track_artist[0].split(' ').join('+');
 
-        switch (s) {
-            case 'tracks':
-            var a = items[i].name;
-            var b = items[i].artists[0].name;
-            var c = items[i].album.name;
-                break;
-    
-            case 'artists':
-            var a = items[i].name;
-            var b = items[i].genres.join(', ');
-            var c = items[i].followers.total;
-                break;
-    
-    
-            case 'albums':
-            var a = items[i].name;
-            var b = items[i].artists[0].name;
-            var c = items[i].total_tracks;
-                break;
-    
-    
-            case 'playlists':
-            var a = items[i].name;
-            var b = items[i].owner.display_name;
-            var c = items[i].tracks.total;
-                break;
+    $.ajax({
+        url: 'https://api.lyrics.ovh/v1/' + track_artist + '/' + track_name,
+        method: 'GET'
+    }).then(function (response) {
+
+        var lyrics = response.lyrics.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        $('.media-info div').html(lyrics);
+    })
+}
+
+function addToQueue(id) {
+
+    $.ajax({
+        url: 'https://api.spotify.com/v1/tracks/' + id + '?access_token=' + token,
+        method: 'GET'
+    }).then(function (response) {
+        var track_name = response.name;
+        var track_artists = [];
+        for (var i = 0; i < response.artists.length; i++) {
+            track_artists.push(response.artists[i].name);
         }
+        track_artists = track_artists.join(', ');
+        var track_image = response.album.images[0].url;
 
-        var button = $('<button class="each-search" data-number="' + i + '">');
-        var h4 = $('<h4>');
-        var h5 = $('<h5>');
-        var h6 = $('<h6>');
+        songs.update({
+            [id]: {
+                name: track_name,
+                artists: track_artists,
+                votes: 0,
+                upvoters: [''],
+                downvoters: [''],
+                image: track_image
+            }
+        })
 
-        h4.text(a);
-        h5.text(b);
-        h6.text(c);
-
-        $(button).append(h4, h5, h6);
-
-        $('.search-results').append(button);
-    }
+    })
 }

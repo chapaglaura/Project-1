@@ -1,5 +1,5 @@
 html, body {
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
 }
 
@@ -13,12 +13,12 @@ html, body {
 }
 
 .main-row {
-    background-color: lightblue;
+    background-color: #4717f6;
     left: 0;
 }
 
 .secondary-row {
-    background-color: steelblue;
+    background-color: #a239ca;
     left: 100%;
 }
 
@@ -33,7 +33,7 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #222;
+    color: white;
 }
 
 .rooms div {
@@ -44,6 +44,12 @@ html, body {
 
 .rooms button {
     margin: 10px;
+    background-color: #e7dfdd;
+    color: black;
+}
+
+.rooms button:hover {
+    background-color: #e7df00;
 }
 
 .rooms i {
@@ -57,4 +63,12 @@ html, body {
 
 #valid-username {
     margin: 0;
+}
+
+/* MEDIA QUERIES */
+
+@media (max-width: 480px) {
+    .rooms div {
+        width: 80%;
+    }
 }
