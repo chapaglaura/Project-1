@@ -1,5 +1,16 @@
 /* Menu with list of users. Toggles hiding class to alternate
     between open and closed menu. */
+
+    $('.main').click(function () {
+        $('.users-icon').addClass('fa-users').removeClass('fa-times');
+        $('.player-icon').addClass('fa-play-circle').removeClass('fa-times');
+        $('.device-icon').addClass('fa-connectdevelop fab').removeClass('fa-times fas');
+        $('.queue-icon').addClass('fa-music').removeClass('fa-times');
+        $('.info-icon').addClass('fa-info-circle').removeClass('fa-times');
+
+        $('.users, .player, .devices, .queue, .info').removeClass('menu-item-opened').addClass('hidden');
+        $('.menu-icons').removeClass('menu-opened');
+    });
     $('.menu-icons-left').on('click', '.menu-icon', function () {
         var icon = $(this);
 
@@ -140,10 +151,6 @@
 
 
         }
-
-
-
-
     });
 
 

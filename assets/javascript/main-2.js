@@ -31,6 +31,8 @@ var adt = database.ref('rooms/' + room + '/admin-token');
 
 $(document).ready(() => {
 
+    $('.room-name').text('Room name: ' + room);
+
     /* GET SESSION STORAGE */
 
     /*If room was previously closed (admin left),
@@ -87,8 +89,6 @@ $(document).ready(() => {
             }
         }
     });
-
-
 
 
     /* If any child from this room removed, in other words,
@@ -243,9 +243,20 @@ $(document).ready(() => {
 
     }
 
+    currentSong(token);
+    progressing();
+    $.ajax({
+        url: "https://api.spotify.com/v1/me/player/repeat?state=track&access_token=" + token,
+        type: "PUT",
+        success: function (data) {
+    
+        }
+    });
+
 });
 
 function getLyrics() {
+    console.log('HOW');
     var track_name = $('#current-track-name').text();
     var track_artist = $('#current-track-artists').text();
     track_artist = track_artist.split(',');

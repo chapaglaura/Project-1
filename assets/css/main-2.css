@@ -83,6 +83,18 @@ box-shadow: 5px 0px 40px 0px rgba(0,0,0,1);
     background-color: #4717f6;
 }
 
+.reload, .room-name {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px 10px;
+    margin: 0;
+}
+
+.reload:hover {
+    color: #4717f6;
+}
+
 .info div {
     padding: 0 20px 0 0;
     text-align: left;
@@ -128,14 +140,16 @@ box-shadow: 5px 0px 40px 0px rgba(0,0,0,1);
     width: 100%;
     border-radius: 5px;
     color: white;
-    background-color: #4717f6;
+    background-color: #4717f6 !important;
     cursor: pointer;
+    opacity: 1;
+    text-shadow: none;
     transition: all 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
 .each-search:hover, .specific-search:hover {
-    background-color: #e7dfdd;
-    color: black;
+    background-color: #e7dfdd !important;
+    color: black !important;
 }
 
 #search-form .active {

@@ -1,13 +1,29 @@
-setInterval(() => {
+var duration = 0;
+var progressIn = 0;
+var counting = {};
+
+function progressing() {
+    counting = setInterval(() => {
+        if (progressIn >= (duration - 10)) {
+            currentSong(token);
+        } else {
+            progressIn++;
+            if (progressIn % 5 === 0) {
+                currentSong(token);
+            }
+        }
+        console.log(progressIn);
+    }, 1000);
+
+}
+
+function currentSong(token) {
 
     $.ajax({
         url: "https://api.spotify.com/v1/me/player/?access_token=" + token,
         method: 'GET'
     }).then(function (response) {
         if (response != undefined) {
-
-            var duration = Math.floor(response.item.duration_ms / 1000) - 1;
-            var progress = Math.floor(response.progress_ms / 1000);
 
             var track_name = response.item.name
             var track_artists = [];
@@ -21,22 +37,21 @@ setInterval(() => {
             track_artists = track_artists.join(', ');
             $('#current-track-artists').text(track_artists);
 
-            if (progress >= duration && $('.queue-list > *').length != 0) {
-                var id = $('.queue-track:first').attr('data-id');
-                setSong(id);
+            if (progressIn < 10) {
+                getLyrics();
             }
 
-            checkRepeat();
+            duration = Math.floor(response.item.duration_ms / 1000) - 5;
+            progressIn = Math.floor(response.progress_ms / 1000);
 
-
-            getLyrics();
+            if (progressIn >= (duration - 10) && $('.queue-list > *').length != 0) {
+                toggleRepeat();
+            }
 
         }
 
     });
-}, 1000);
-
-setInterval(searchDevices, 2000);
+}
 
 $('.devices').on('click', '.device', function () {
     var ID = $(this).attr('data-source-id');
@@ -46,7 +61,7 @@ $('.devices').on('click', '.device', function () {
     adt.update({
         device: deviceID
     })
-    
+
     $.ajax({
         url: "https://api.spotify.com/v1/me/player?access_token=" + token,
         type: "PUT",
@@ -55,6 +70,10 @@ $('.devices').on('click', '.device', function () {
         }
     });
 })
+
+$('.reload').click(function () {
+    searchDevices();
+});
 
 function decreaseVol() {
     volume = parseInt(volume) - 10;
@@ -79,6 +98,7 @@ function pauseSong() {
         url: "https://api.spotify.com/v1/me/player/pause?device_id=" + deviceID + "&access_token=" + token,
         method: 'PUT'
     }).then(function (response) {
+        clearInterval(counting);
     })
 }
 
@@ -87,58 +107,56 @@ function playSong() {
         url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceID + "&access_token=" + token,
         method: 'PUT'
     }).then(function (response) {
-
+        currentSong(token);
+        progressing();
     })
 }
 
 function nextSong() {
-    var id = $('.queue-track:first').attr('data-id');
-
-    setSong(id);
+    if ($('.queue-list > *').length != 0) {
+        var id = $('.queue-track:first').attr('data-id');
+        setSong(id);
+    }
 }
 
 
 function setSong(ID) {
 
     if (admin) {
-        songs.update({
-            [ID]: null
-        });
-
         $.ajax({
             url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceID + "&access_token=" + token,
             type: "PUT",
             data: '{"uris": ["spotify:track:' + ID + '"]}',
             success: function (data) {
+                songs.update({
+                    [ID]: null
+                });
             }
         });
     }
-
-    setTimeout(getLyrics, 500);
 }
 
-function checkRepeat() {
-    if ($('.queue-list > *').length === 0) {
-        $.ajax({
-            url: "https://api.spotify.com/v1/me/player/repeat?state=track&access_token=" + token,
-            type: "PUT",
-            success: function (data) {
+function toggleRepeat() {
+    $.ajax({
+        url: "https://api.spotify.com/v1/me/player/repeat?state=off&access_token=" + token,
+        type: "PUT",
+        success: function (data) {
+            var id = $('.queue-track:first').attr('data-id');
+            setSong(id);
 
-            }
-        });
-    }
-    else {
-        $.ajax({
-            url: "https://api.spotify.com/v1/me/player/repeat?state=off&access_token=" + token,
-            type: "PUT",
-            success: function (data) {
+            $.ajax({
+                url: "https://api.spotify.com/v1/me/player/repeat?state=track&access_token=" + token,
+                type: "PUT",
+                success: function (data) {
 
-            }
-        });
-    }
+                }
+            });
+        }
+    });
 }
 
 function searchDevices() {
+    console.log('device');
     $.ajax({
         url: "https://api.spotify.com/v1/me/player/devices?&access_token=" + token,
         method: 'GET'
